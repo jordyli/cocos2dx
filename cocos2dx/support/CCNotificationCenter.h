@@ -88,6 +88,13 @@ public:
      */
     void postNotification(const char *name, CCObject *object);
     
+    /** @brief Jordy : Posts one notification event by name and user info.
+     *  @param name The name of this notification.
+     *  @param object The object sent out this notification
+     *  @param userInfo The extra parameter.
+     */
+    void postNotification(const char *name, CCObject *object, CCObject *userInfo);
+    
     /** @brief Gets script handler.
      *  @note Only supports Lua Binding now.
      *  @return The script handle.

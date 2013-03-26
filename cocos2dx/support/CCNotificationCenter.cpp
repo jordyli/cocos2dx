@@ -150,6 +150,28 @@ void CCNotificationCenter::unregisterScriptObserver(void)
     m_scriptHandler = 0;
 }
 
+void CCNotificationCenter::postNotification(const char *name, CCObject *object, CCObject *userInfo)
+{
+    CCArray* ObserversCopy = CCArray::createWithCapacity(m_observers->count());
+    ObserversCopy->addObjectsFromArray(m_observers);
+    CCObject* obj = NULL;
+    CCARRAY_FOREACH(ObserversCopy, obj)
+    {
+        CCNotificationObserver* observer = (CCNotificationObserver*) obj;
+        if (!observer)
+            continue;
+        
+        if (!strcmp(name,observer->getName()) && (observer->getObject() == object || observer->getObject() == NULL || object == NULL))
+            observer->performSelector(userInfo);
+    }
+    
+    if (m_scriptHandler)
+    {
+        CCScriptEngineProtocol* engine = CCScriptEngineManager::sharedManager()->getScriptEngine();
+        engine->executeNotificationEvent(this, name);
+    }
+}
+
 void CCNotificationCenter::postNotification(const char *name, CCObject *object)
 {
     CCArray* ObserversCopy = CCArray::createWithCapacity(m_observers->count());

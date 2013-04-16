@@ -1032,10 +1032,31 @@ CCArray* CCBReader::getAnimationManagersForNodes() {
 /************************************************************************
  Static functions
  ************************************************************************/
-
+static float resolutionScale_ = -1;
 float CCBReader::getResolutionScale()
 {
-    return 1;
+    if (resolutionScale_ < 0)
+    {
+        CCSize frameSize = CCDirector::sharedDirector()->getOpenGLView()->getFrameSize();
+        CCSize designResolution_ = getDesignResolution();
+        
+        resolutionScale_ = MIN(frameSize.width / designResolution_.width, frameSize.height / designResolution_.height);
+    }
+    
+    return resolutionScale_;
+}
+
+CCSize CCBReader::getDesignResolution()
+{
+    CCSize frameSize = CCDirector::sharedDirector()->getOpenGLView()->getFrameSize();
+    CCSize designResolution_ = CCSizeMake(768, 1024);
+    
+    if (frameSize.width > frameSize.height)
+    {
+        CC_SWAP(designResolution_.width, designResolution_.height, float);
+    }
+    
+    return designResolution_;
 }
 
 NS_CC_EXT_END;

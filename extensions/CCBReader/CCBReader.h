@@ -270,6 +270,7 @@ public:
     void addDocumentCallbackNode(CCNode *node);
     
     static float getResolutionScale();
+    static CCSize getDesignResolution();
     
     CCNode* readFileWithCleanUp(bool bCleanUp, CCDictionary* am);
 

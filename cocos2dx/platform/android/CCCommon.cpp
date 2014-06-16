@@ -51,7 +51,7 @@ void CCMessageBox(const char * pszMsg, const char * pszTitle)
 
 void CCLuaLog(const char * pszFormat)
 {
-    __android_log_print(ANDROID_LOG_DEBUG, "cocos2d-x debug info", pszFormat);
+    CCLog(pszFormat);
 }
 
 NS_CC_END

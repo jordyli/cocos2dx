@@ -1,6 +1,7 @@
 
 class CCGridAction : public CCActionInterval
 {
+	CCObject* copyWithZone(CCZone* pZone);
 	CCActionInterval* reverse(void);
 
     CCGridBase* getGrid(void);

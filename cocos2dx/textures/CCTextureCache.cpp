@@ -105,11 +105,7 @@ static CCImage::EImageFormat computeImageFormatType(string& filename)
     {
         ret = CCImage::kFmtTiff;
     }
-    else if ((std::string::npos != filename.find(".webp")) || (std::string::npos != filename.find(".WEBP")))
-    {
-        ret = CCImage::kFmtWebp;
-    }
-   
+    
     return ret;
 }
 
@@ -402,17 +398,14 @@ CCTexture2D * CCTextureCache::addImage(const char * path)
     
     //pthread_mutex_lock(m_pDictLock);
 
+    // remove possible -HD suffix to prevent caching the same image twice (issue #1040)
     std::string pathKey = path;
 
     pathKey = CCFileUtils::sharedFileUtils()->fullPathForFilename(pathKey.c_str());
-    if (pathKey.size() == 0)
-    {
-        return NULL;
-    }
     texture = (CCTexture2D*)m_pTextures->objectForKey(pathKey.c_str());
 
     std::string fullpath = pathKey; // (CCFileUtils::sharedFileUtils()->fullPathFromRelativePath(path));
-    if (! texture) 
+    if( ! texture ) 
     {
         std::string lowerCase(pathKey);
         for (unsigned int i = 0; i < lowerCase.length(); ++i)
@@ -441,17 +434,12 @@ CCTexture2D * CCTextureCache::addImage(const char * path)
                 {
                     eImageFormat = CCImage::kFmtTiff;
                 }
-                else if (std::string::npos != lowerCase.find(".webp"))
-                {
-                    eImageFormat = CCImage::kFmtWebp;
-                }
                 
                 pImage = new CCImage();
                 CC_BREAK_IF(NULL == pImage);
 
                 unsigned long nSize = 0;
                 unsigned char* pBuffer = CCFileUtils::sharedFileUtils()->getFileData(fullpath.c_str(), "rb", &nSize);
-                
                 bool bRet = pImage->initWithImageData((void*)pBuffer, nSize, eImageFormat);
                 CC_SAFE_DELETE_ARRAY(pBuffer);
                 CC_BREAK_IF(!bRet);
@@ -465,12 +453,13 @@ CCTexture2D * CCTextureCache::addImage(const char * path)
                     // cache the texture file name
                     VolatileTexture::addImageTexture(texture, fullpath.c_str(), eImageFormat);
 #endif
+
                     m_pTextures->setObject(texture, pathKey.c_str());
                     texture->release();
                 }
                 else
                 {
-                    CCLOG("cocos2d: Couldn't create texture for file:%s in CCTextureCache", path);
+                    CCLOG("cocos2d: Couldn't add image:%s in CCTextureCache", path);
                 }
             }
         } while (0);

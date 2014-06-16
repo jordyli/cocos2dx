@@ -40,7 +40,7 @@ NS_CC_EXT_BEGIN
  * @{
  */
 
-class CCScale9Sprite : public CCNodeRGBA
+class CCScale9Sprite : public CCNode, public CCRGBAProtocol
 {
 public:
     CCScale9Sprite();
@@ -67,6 +67,11 @@ public:
     CC_PROPERTY(float, m_insetRight, InsetRight);
     /** Sets the bottom side inset */
     CC_PROPERTY(float, m_insetBottom, InsetBottom);
+
+    /** Opacity: conforms to CCRGBAProtocol protocol */
+    CC_PROPERTY(GLubyte, m_cOpacity, Opacity)
+    /** Color: conforms to CCRGBAProtocol protocol */
+    CC_PROPERTY_PASS_BY_REF(ccColor3B, m_tColor, Color)
 
 protected:
     bool m_bSpritesGenerated;

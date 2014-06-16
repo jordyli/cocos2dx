@@ -48,7 +48,7 @@ void CCMessageBox(const char * pszMsg, const char * pszTitle)
 
 void CCLuaLog(const char * pszFormat)
 {
-    puts(pszFormat);
+    CCLog(pszFormat);
 }
 
 NS_CC_END

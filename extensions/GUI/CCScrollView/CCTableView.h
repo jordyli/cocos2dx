@@ -90,7 +90,6 @@ public:
 class CCTableViewDataSource
 {
 public:
-    virtual ~CCTableViewDataSource() {}
     /**
      * cell height for a given table.
      *
@@ -246,14 +245,12 @@ protected:
     unsigned int _indexFromOffset(CCPoint offset);
     CCPoint __offsetFromIndex(unsigned int index);
     CCPoint _offsetFromIndex(unsigned int index);
-    
+    void _updateContentSize();
 
+    CCTableViewCell* _cellWithIndex(unsigned int cellIndex);
     void _moveCellOutOfSight(CCTableViewCell *cell);
     void _setIndexForCell(unsigned int index, CCTableViewCell *cell);
     void _addCellIfNecessary(CCTableViewCell * cell);
-    
-public:
-    void _updateContentSize();
 
 };
 

@@ -61,14 +61,14 @@ static CCTexture2DPixelFormat g_defaultAlphaPixelFormat = kCCTexture2DPixelForma
 static bool PVRHaveAlphaPremultiplied_ = false;
 
 CCTexture2D::CCTexture2D()
-: m_bPVRHaveAlphaPremultiplied(true)
-, m_uPixelsWide(0)
+: m_uPixelsWide(0)
 , m_uPixelsHigh(0)
 , m_uName(0)
 , m_fMaxS(0.0)
 , m_fMaxT(0.0)
 , m_bHasPremultipliedAlpha(false)
 , m_bHasMipmaps(false)
+, m_bPVRHaveAlphaPremultiplied(true)
 , m_pShaderProgram(NULL)
 {
 }
@@ -253,6 +253,7 @@ bool CCTexture2D::initWithImage(CCImage *uiImage)
     if (uiImage == NULL)
     {
         CCLOG("cocos2d: CCTexture2D. Can't create Texture. UIImage is nil");
+        this->release();
         return false;
     }
     
@@ -265,7 +266,8 @@ bool CCTexture2D::initWithImage(CCImage *uiImage)
     if (imageWidth > maxTextureSize || imageHeight > maxTextureSize) 
     {
         CCLOG("cocos2d: WARNING: Image (%u x %u) is bigger than the supported %u x %u", imageWidth, imageHeight, maxTextureSize, maxTextureSize);
-        return false;
+        this->release();
+        return NULL;
     }
     
     // always load premultiplied images
@@ -445,19 +447,18 @@ bool CCTexture2D::initWithString(const char *text, const char *fontName, float f
     else
     {
         CCAssert(false, "Not supported alignment format!");
-        return false;
     }
     
-    CCImage* pImage = new CCImage();
     do 
     {
+        CCImage* pImage = new CCImage();
         CC_BREAK_IF(NULL == pImage);
         bRet = pImage->initWithString(text, (int)dimensions.width, (int)dimensions.height, eAlign, fontName, (int)fontSize);
         CC_BREAK_IF(!bRet);
         bRet = initWithImage(pImage);
+        CC_SAFE_RELEASE(pImage);
     } while (0);
-    CC_SAFE_RELEASE(pImage);
-
+    
     return bRet;
 }
 
@@ -525,6 +526,7 @@ bool CCTexture2D::initWithPVRTCData(const void *data, int level, int bpp, bool h
     if( !(CCConfiguration::sharedConfiguration()->supportsPVRTC()) )
     {
         CCLOG("cocos2d: WARNING: PVRTC images is not supported.");
+        this->release();
         return false;
     }
 

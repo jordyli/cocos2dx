@@ -1,73 +1,81 @@
-TARGET = libbox2d.a
+CC      = gcc
+CXX     = g++
+AR      = ar
+TARGET	= libbox2d.a
+CCFLAGS = -Wall 
+CXXFLAGS = -Wall
+ARFLAGS = cr
 
-SOURCES = ../Collision/Shapes/b2ChainShape.cpp \
-../Collision/Shapes/b2CircleShape.cpp \
-../Collision/Shapes/b2EdgeShape.cpp \
-../Collision/Shapes/b2PolygonShape.cpp \
-../Collision/b2BroadPhase.cpp \
-../Collision/b2CollideCircle.cpp \
-../Collision/b2CollideEdge.cpp \
-../Collision/b2CollidePolygon.cpp \
-../Collision/b2Collision.cpp \
-../Collision/b2Distance.cpp \
-../Collision/b2DynamicTree.cpp \
-../Collision/b2TimeOfImpact.cpp \
-../Common/b2BlockAllocator.cpp \
-../Common/b2Draw.cpp \
-../Common/b2Math.cpp \
-../Common/b2Settings.cpp \
-../Common/b2StackAllocator.cpp \
-../Common/b2Timer.cpp \
-../Dynamics/Contacts/b2ChainAndCircleContact.cpp \
-../Dynamics/Contacts/b2ChainAndPolygonContact.cpp \
-../Dynamics/Contacts/b2CircleContact.cpp \
-../Dynamics/Contacts/b2Contact.cpp \
-../Dynamics/Contacts/b2ContactSolver.cpp \
-../Dynamics/Contacts/b2EdgeAndCircleContact.cpp \
-../Dynamics/Contacts/b2EdgeAndPolygonContact.cpp \
-../Dynamics/Contacts/b2PolygonAndCircleContact.cpp \
-../Dynamics/Contacts/b2PolygonContact.cpp \
-../Dynamics/Joints/b2DistanceJoint.cpp \
-../Dynamics/Joints/b2FrictionJoint.cpp \
-../Dynamics/Joints/b2GearJoint.cpp \
-../Dynamics/Joints/b2Joint.cpp \
-../Dynamics/Joints/b2MouseJoint.cpp \
-../Dynamics/Joints/b2PrismaticJoint.cpp \
-../Dynamics/Joints/b2PulleyJoint.cpp \
-../Dynamics/Joints/b2RevoluteJoint.cpp \
-../Dynamics/Joints/b2RopeJoint.cpp \
-../Dynamics/Joints/b2WeldJoint.cpp \
-../Dynamics/Joints/b2WheelJoint.cpp \
-../Dynamics/b2Body.cpp \
-../Dynamics/b2ContactManager.cpp \
-../Dynamics/b2Fixture.cpp \
-../Dynamics/b2Island.cpp \
-../Dynamics/b2World.cpp \
-../Dynamics/b2WorldCallbacks.cpp \
-../Rope/b2Rope.cpp
+INCLUDES = -I../../
 
-include ../../../cocos2dx/proj.linux/cocos2dx.mk
+DEFINES = -DLINUX
 
-INCLUDES = -I../..
+OBJECTS = ../Collision/Shapes/b2ChainShape.o \
+../Collision/Shapes/b2CircleShape.o \
+../Collision/Shapes/b2EdgeShape.o \
+../Collision/Shapes/b2PolygonShape.o \
+../Collision/b2BroadPhase.o \
+../Collision/b2CollideCircle.o \
+../Collision/b2CollideEdge.o \
+../Collision/b2CollidePolygon.o \
+../Collision/b2Collision.o \
+../Collision/b2Distance.o \
+../Collision/b2DynamicTree.o \
+../Collision/b2TimeOfImpact.o \
+../Common/b2BlockAllocator.o \
+../Common/b2Draw.o \
+../Common/b2Math.o \
+../Common/b2Settings.o \
+../Common/b2StackAllocator.o \
+../Common/b2Timer.o \
+../Dynamics/Contacts/b2ChainAndCircleContact.o \
+../Dynamics/Contacts/b2ChainAndPolygonContact.o \
+../Dynamics/Contacts/b2CircleContact.o \
+../Dynamics/Contacts/b2Contact.o \
+../Dynamics/Contacts/b2ContactSolver.o \
+../Dynamics/Contacts/b2EdgeAndCircleContact.o \
+../Dynamics/Contacts/b2EdgeAndPolygonContact.o \
+../Dynamics/Contacts/b2PolygonAndCircleContact.o \
+../Dynamics/Contacts/b2PolygonContact.o \
+../Dynamics/Joints/b2DistanceJoint.o \
+../Dynamics/Joints/b2FrictionJoint.o \
+../Dynamics/Joints/b2GearJoint.o \
+../Dynamics/Joints/b2Joint.o \
+../Dynamics/Joints/b2MouseJoint.o \
+../Dynamics/Joints/b2PrismaticJoint.o \
+../Dynamics/Joints/b2PulleyJoint.o \
+../Dynamics/Joints/b2RevoluteJoint.o \
+../Dynamics/Joints/b2RopeJoint.o \
+../Dynamics/Joints/b2WeldJoint.o \
+../Dynamics/Joints/b2WheelJoint.o \
+../Dynamics/b2Body.o \
+../Dynamics/b2ContactManager.o \
+../Dynamics/b2Fixture.o \
+../Dynamics/b2Island.o \
+../Dynamics/b2World.o \
+../Dynamics/b2WorldCallbacks.o \
+../Rope/b2Rope.o 
 
-# Unfortunetly Box2D doesn't compiler cleanly without these
-CXXFLAGS += -Wno-unused-but-set-variable
-CXXFLAGS += -Wno-uninitialized
+debug: CCFLAGS += -g3 -O0
+debug: CXXFLAGS += -g3 -O0
+debug: DEFINES += -DDEBUG
+debug: $(TARGET)
 
-ifeq ($(DEBUG), 1)
-DEFINES = -D_DEBUG
-else
-DEFINES =
-endif
+release: CCFLAGS += -O3
+release: CXXFLAGS += -O3
+release: DEFINES += -DNDEBUG
+release: $(TARGET)
 
-TARGET := $(LIB_DIR)/$(TARGET)
+####### Build rules
+$(TARGET): $(OBJECTS) 
+	$(AR) $(ARFLAGS) $(TARGET) $(OBJECTS)  
 
-all: $(TARGET)
+####### Compile
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c $< -o $@
 
-$(TARGET): $(OBJECTS) $(CORE_MAKEFILE_LIST)
-	@mkdir -p $(@D)
-	$(LOG_AR)$(AR) $(ARFLAGS) $(TARGET) $(OBJECTS)
+%.o: %.c
+	$(CC) $(CCFLAGS) $(INCLUDES) $(DEFINES) -c $< -o $@
 
-$(OBJ_DIR)/%.o: ../%.cpp $(CORE_MAKEFILE_LIST)
-	@mkdir -p $(@D)
-	$(LOG_CXX)$(CXX) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c $< -o $@
+clean: 
+	rm -f $(OBJECTS) $(TARGET) core

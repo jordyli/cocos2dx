@@ -7,10 +7,6 @@ enum {
     kCCNodeOnExit
 };
 
-typedef enum {
-      CC_GL_ALL = 0,
-} ccGLServerState;
-
 class CCNode : public CCObject
 {
     int     getZOrder();

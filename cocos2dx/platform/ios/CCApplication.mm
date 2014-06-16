@@ -35,13 +35,13 @@ CCApplication* CCApplication::sm_pSharedApplication = 0;
 
 CCApplication::CCApplication()
 {
-//    CC_ASSERT( sm_pSharedApplication);
+    CC_ASSERT(! sm_pSharedApplication);
     sm_pSharedApplication = this;
 }
 
 CCApplication::~CCApplication()
 {
-//    CC_ASSERT(this == sm_pSharedApplication);
+    CC_ASSERT(this == sm_pSharedApplication);
     sm_pSharedApplication = 0;
 }
 
@@ -112,12 +112,6 @@ ccLanguageType CCApplication::getCurrentLanguage()
     }
     else if ([languageCode isEqualToString:@"hu"]){
         ret = kLanguageHungarian;
-    }
-    else if ([languageCode isEqualToString:@"pt"]){
-        ret = kLanguagePortuguese;
-    }
-    else if ([languageCode isEqualToString:@"ar"]){
-        ret = kLanguageArabic;
     }
 
     return ret;

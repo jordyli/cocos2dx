@@ -1,27 +1,69 @@
-TARGET = libcocosdenshion.so
+CC      = gcc
+CXX     = g++
+TARGET	= libcocosdenshion.so
+CCFLAGS = -Wall -fPIC
+CXXFLAGS = -Wall -fPIC
+VISIBILITY = 
 
-INCLUDES += -I.. -I../include
+COCOS2DX_PATH = ../../cocos2dx
 
+LBITS := $(shell getconf LONG_BIT)
 ifeq ($(LBITS),64)
-INCLUDES += -I../third_party/fmod/lib64/api/inc
+INCLUDES = -I.. \
+		-I../include \
+		-I../third_party/fmod/lib64/api/inc 
 else
-INCLUDES += -I../third_party/fmod/api/inc
+INCLUDES = -I.. \
+		-I../include \
+		-I../third_party/fmod/api/inc 
 endif
 
-SOURCES = ../linux/FmodAudioPlayer.cpp \
-          ../linux/SimpleAudioEngine.cpp \
+INCLUDES += -I$(COCOS2DX_PATH) \
+			-I$(COCOS2DX_PATH)/platform/third_party/linux \
+			-I$(COCOS2DX_PATH)/platform/third_party/linux/libfreetype2 \
+			-I$(COCOS2DX_PATH)/cocoa \
+			-I$(COCOS2DX_PATH)/include \
+			-I$(COCOS2DX_PATH)/platform \
+			-I$(COCOS2DX_PATH)/platform/linux \
+			-I$(COCOS2DX_PATH)/kazmath/include \
+			-I$(COCOS2DX_PATH)/platform/third_party/linux/libxml2 \
+			-I$(COCOS2DX_PATH)/platform/third_party/linux/libjpeg 
 
-COCOS_ROOT = ../..
-include $(COCOS_ROOT)/cocos2dx/proj.linux/cocos2dx.mk
+DEFINES = -DLINUX
 
-TARGET := $(LIB_DIR)/$(TARGET)
+OBJECTS =   ../linux/FmodAudioPlayer.o \
+            ../linux/SimpleAudioEngine.o \
 
-all: $(TARGET)
+STATICLIBS = 
 
-$(TARGET): $(OBJECTS) $(CORE_MAKEFILE_LIST)
-	@mkdir -p $(@D)
-	$(LOG_LINK)$(CXX) $(CXXFLAGS) $(OBJECTS) -shared -o $(TARGET) $(SHAREDLIBS) $(STATICLIBS)
+ifeq ($(LBITS),64)
+SHAREDLIBS_DIR = ../third_party/fmod/lib64/api/lib
+SHAREDLIBS = -L$(SHAREDLIBS_DIR) -lfmodex64
+else
+SHAREDLIBS_DIR = ../third_party/fmod/api/lib
+SHAREDLIBS = -L$(SHAREDLIBS_DIR) -lfmodex
+endif
 
-$(OBJ_DIR)/%.o: ../%.cpp $(CORE_MAKEFILE_LIST)
-	@mkdir -p $(@D)
-	$(LOG_CXX)$(CXX) $(CXXFLAGS) $(INCLUDES) $(DEFINES) $(VISIBILITY) -c $< -o $@
+debug: CCFLAGS += -g3 -O0
+debug: CXXFLAGS += -g3 -O0
+debug: DEFINES += -DDEBUG
+debug: $(TARGET)
+
+release: CCFLAGS += -O3
+release: CXXFLAGS += -O3
+release: DEFINES += -DNDEBUG
+release: $(TARGET)
+
+####### Build rules
+$(TARGET): $(OBJECTS) 
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(DEFINES) $(OBJECTS) -shared -o $(TARGET) $(SHAREDLIBS) $(STATICLIBS)
+
+####### Compile
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(DEFINES) $(VISIBILITY) -c $< -o $@
+
+%.o: %.c
+	$(CC) $(CCFLAGS) $(INCLUDES) $(DEFINES) $(VISIBILITY) -c $< -o $@
+
+clean: 
+	rm -f $(OBJECTS) $(TARGET) core

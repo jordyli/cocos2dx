@@ -2,8 +2,6 @@
 // cocos2d constants
 //
 
-require('jsb_cocos2d_constants.js');
-
 var cc = cc || {};
 
 cc.DIRECTOR_PROJECTION_2D = 0;
@@ -61,7 +59,6 @@ cc.GREEN = {r:0, g:255, b:0};
 cc.BLUE = {r:0, g:0, b:255};
 cc.BLACK = {r:0, g:0, b:0};
 cc.WHITE = {r:255, g:255, b:255};
-cc.YELLOW = {r:255, g:255, b:0};
 
 cc.POINT_ZERO = {x:0, y:0};
 
@@ -319,13 +316,10 @@ cc.dump = function(obj)
 };
 
 // dump config info, but only in debug mode
-var sys = sys || undefined;
 cc.dumpConfig = function()
 {
-    if (sys) {
-        cc.dump(sys);
-        cc.dump(sys.capabilities);
-    }
+    cc.dump(sys);
+    cc.dump(sys.capabilities);
 };
 
 //
@@ -371,6 +365,28 @@ cc.LabelAtlas.create = function( a,b,c,d,e ) {
 };
 
 cc.LayerMultiplex.create = cc.LayerMultiplex.createWithArray;
+
+// PhysicsDebugNode
+cc.PhysicsDebugNode.create = function( space ) {
+    var s = space;
+    if( space.handle !== undefined )
+        s = space.handle;
+    return cc.PhysicsDebugNode._create( s );
+};
+cc.PhysicsDebugNode.prototype.setSpace = function( space ) {
+    var s = space;
+    if( space.handle !== undefined )
+        s = space.handle;
+    return this._setSpace( s );
+};
+
+// PhysicsSprite
+cc.PhysicsSprite.prototype.setBody = function( body ) {
+    var b = body;
+    if( body.handle !== undefined )
+        b = body.handle;
+    return this._setCPBody( b );
+};
 
 
 /**
@@ -510,23 +526,3 @@ cc.Sprite.extend = cc.Class.extend;
 cc.MenuItemFont.extend = cc.Class.extend;
 cc.Scene.extend = cc.Class.extend;
 cc.DrawNode.extend = cc.Class.extend;
-
-// Cocos2d-html5 supports multi scene resources preloading.
-// This is a compatible function for JSB.
-cc.Loader = cc.Class.extend({
-                            initWith:function (resources, selector, target) {
-                            if (selector) {
-                            this._selector = selector;
-                            this._target = target;
-                            }
-                            this._selector.call(this._target);
-                            }
-                            });
-
-cc.Loader.preload = function (resources, selector, target) {
-    if (!this._instance) {
-        this._instance = new cc.Loader();
-    }
-    this._instance.initWith(resources, selector, target);
-    return this._instance;
-};

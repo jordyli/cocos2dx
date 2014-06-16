@@ -1,3 +1,4 @@
+
 $#include "LuaCocos2d.h"
 
 $pfile "matrix.pkg"
@@ -59,8 +60,8 @@ $pfile "CCLabelTTF.pkg"
 $pfile "CCMenu.pkg"
 $pfile "CCMenuItem.pkg"
 $pfile "CCParallaxNode.pkg"
-$pfile "CCParticleSystem.pkg"
 $pfile "CCParticleExamples.pkg"
+$pfile "CCParticleSystem.pkg"
 $pfile "CCParticleBatchNode.pkg"
 $pfile "CCProgressTimer.pkg"
 $pfile "CCTextFieldTTF.pkg"
@@ -70,7 +71,5 @@ $pfile "CCTMXObjectGroup.pkg"
 $pfile "CCTMXTiledMap.pkg"
 $pfile "CCTMXXMLParser.pkg"
 $pfile "CCTouch.pkg"
-
-$pfile "CCSet.pkg"
 
 $pfile "SimpleAudioEngine.pkg"

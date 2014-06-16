@@ -75,6 +75,11 @@ void CCApplication::setAnimationInterval(double interval)
 	m_animationInterval = (long)(interval * 1000);
 }
 
+CCApplication::Orientation CCApplication::setOrientation(Orientation orientation)
+{
+    return orientation;
+}
+
 void CCApplication::setResourceRootPath(const std::string& rootResDir)
 {
     m_resourceRootPath = rootResDir;
@@ -154,14 +159,6 @@ ccLanguageType CCApplication::getCurrentLanguage()
 	{
 		ret_language = kLanguageHungarian;
 	}
-    else if (strcmp(language, "pt") == 0)
-    {
-        ret_language = kLanguagePortuguese;
-    }
-    else if (strcmp(language, "ar") == 0)
-    {
-        ret_language = kLanguageArabic;
-    }
 
 	free(language);
 	free(country);

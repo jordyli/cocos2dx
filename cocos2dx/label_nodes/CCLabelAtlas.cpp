@@ -25,7 +25,6 @@ THE SOFTWARE.
 ****************************************************************************/
 #include "CCLabelAtlas.h"
 #include "textures/CCTextureAtlas.h"
-#include "textures/CCTextureCache.h"
 #include "support/CCPointExtension.h"
 #include "draw_nodes/CCDrawingPrimitives.h"
 #include "ccConfig.h"
@@ -57,14 +56,8 @@ CCLabelAtlas* CCLabelAtlas::create(const char *string, const char *charMapFile, 
 
 bool CCLabelAtlas::initWithString(const char *string, const char *charMapFile, unsigned int itemWidth, unsigned int itemHeight, unsigned int startCharMap)
 {
-    CCTexture2D *texture = CCTextureCache::sharedTextureCache()->addImage(charMapFile);
-	return initWithString(string, texture, itemWidth, itemHeight, startCharMap);
-}
-
-bool CCLabelAtlas::initWithString(const char *string, CCTexture2D* texture, unsigned int itemWidth, unsigned int itemHeight, unsigned int startCharMap)
-{
     CCAssert(string != NULL, "");
-    if (CCAtlasNode::initWithTexture(texture, itemWidth, itemHeight, strlen(string)))
+    if (CCAtlasNode::initWithTileFile(charMapFile, itemWidth, itemHeight, strlen(string)))
     {
         m_uMapStartChar = startCharMap;
         this->setString(string);
@@ -165,8 +158,7 @@ void CCLabelAtlas::updateAtlasValues()
         quad.tr.vertices.x = (float)(i * m_uItemWidth + m_uItemWidth);
         quad.tr.vertices.y = (float)(m_uItemHeight);
         quad.tr.vertices.z = 0.0f;
-        
-        ccColor4B c = { _displayedColor.r, _displayedColor.g, _displayedColor.b, _displayedOpacity };
+        ccColor4B c = { m_tColor.r, m_tColor.g, m_tColor.b, m_cOpacity };
         quad.tl.colors = c;
         quad.tr.colors = c;
         quad.bl.colors = c;

@@ -78,12 +78,14 @@ JSBool jsval_to_long( JSContext *cx, jsval vp, long *r )
 JSBool jsval_to_longlong( JSContext *cx, jsval vp, long long *r )
 {
 	JSObject *tmp_arg;
-	JSBool ok = JS_ValueToObject( cx, vp, &tmp_arg );
-	JSB_PRECONDITION2( ok, cx, JS_FALSE, "Error converting value to object");
-	JSB_PRECONDITION2( tmp_arg && JS_IsTypedArrayObject( tmp_arg ), cx, JS_FALSE, "Not a TypedArray object");
-	JSB_PRECONDITION2( JS_GetTypedArrayByteLength( tmp_arg ) == sizeof(long long), cx, JS_FALSE, "Invalid Typed Array length");
+	if( ! JS_ValueToObject( cx, vp, &tmp_arg ) )
+		return JS_FALSE;
 	
-	uint32_t* arg_array = (uint32_t*)JS_GetArrayBufferViewData( tmp_arg );
+	JSB_PRECONDITION( tmp_arg && JS_IsTypedArrayObject( tmp_arg, cx ), "Not a TypedArray object");
+    
+	JSB_PRECONDITION( JS_GetTypedArrayByteLength( tmp_arg, cx ) == sizeof(long long), "Invalid Typed Array lenght");
+	
+	int32_t* arg_array = (int32_t*)JS_GetArrayBufferViewData( tmp_arg, cx );
 	long long ret =  arg_array[0];
 	ret = ret << 32;
 	ret |= arg_array[1];
@@ -199,14 +201,17 @@ JSBool jsval_to_charptr( JSContext *cx, jsval vp, const char **ret )
     // root it
     vp = STRING_TO_JSVAL(jsstr);
 
-    JSStringWrapper strWrapper(jsstr);
-    
+    char *ptr = JS_EncodeString(cx, jsstr);
+
+    JSB_PRECONDITION2(ptr, cx, JS_FALSE, "Error encoding string");
+
     // XXX: It is converted to CCString and then back to char* to autorelease the created object.
-    CCString *tmp = CCString::create(strWrapper.get());
+    CCString *tmp = CCString::create(ptr);
 
     JSB_PRECONDITION2( tmp, cx, JS_FALSE, "Error creating string from UTF8");
 
     *ret = tmp->getCString();
+    JS_free( cx, ptr );
 
     return JS_TRUE;
 }

@@ -111,7 +111,7 @@ local function main()
         end
 
         local function onTouchMoved(x, y)
-            cclog("onTouchMoved: %0.2f, %0.2f", x, y)
+            -- cclog("onTouchMoved: %0.2f, %0.2f", x, y)
             if touchBeginPoint then
                 local cx, cy = layerFarm:getPosition()
                 layerFarm:setPosition(cx + x - touchBeginPoint.x,
@@ -127,9 +127,9 @@ local function main()
         end
 
         local function onTouch(eventType, x, y)
-            if eventType == "began" then   
+            if eventType == CCTOUCHBEGAN then
                 return onTouchBegan(x, y)
-            elseif eventType == "moved" then
+            elseif eventType == CCTOUCHMOVED then
                 return onTouchMoved(x, y)
             else
                 return onTouchEnded(x, y)

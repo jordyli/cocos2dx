@@ -38,37 +38,22 @@ namespace JS {
 struct TypeInferenceSizes
 {
     TypeInferenceSizes()
-      : typeScripts(0)
-      , typeResults(0)
-      , analysisPool(0)
-      , typePool(0)
-      , pendingArrays(0)
-      , allocationSiteTables(0)
-      , arrayTypeTables(0)
-      , objectTypeTables(0)
-      , typeObjects(0)
+      : scripts(0)
+      , objects(0)
+      , tables(0)
+      , temporary(0)
     {}
 
-    size_t typeScripts;
-    size_t typeResults;
-    size_t analysisPool;
-    size_t typePool;
-    size_t pendingArrays;
-    size_t allocationSiteTables;
-    size_t arrayTypeTables;
-    size_t objectTypeTables;
-    size_t typeObjects;
+    size_t scripts;
+    size_t objects;
+    size_t tables;
+    size_t temporary;
 
     void add(TypeInferenceSizes &sizes) {
-        this->typeScripts          += sizes.typeScripts;
-        this->typeResults          += sizes.typeResults;
-        this->analysisPool         += sizes.analysisPool;
-        this->typePool             += sizes.typePool;
-        this->pendingArrays        += sizes.pendingArrays;
-        this->allocationSiteTables += sizes.allocationSiteTables;
-        this->arrayTypeTables      += sizes.arrayTypeTables;
-        this->objectTypeTables     += sizes.objectTypeTables;
-        this->typeObjects          += sizes.typeObjects;
+        this->scripts   += sizes.scripts;
+        this->objects   += sizes.objects;
+        this->tables    += sizes.tables;
+        this->temporary += sizes.temporary;
     }
 };
 
@@ -144,15 +129,10 @@ struct CompartmentStats
       , extra2(0)
       , gcHeapArenaAdmin(0)
       , gcHeapUnusedGcThings(0)
-      , gcHeapObjectsOrdinary(0)
+      , gcHeapObjectsNonFunction(0)
       , gcHeapObjectsFunction(0)
-      , gcHeapObjectsDenseArray(0)
-      , gcHeapObjectsSlowArray(0)
-      , gcHeapObjectsCrossCompartmentWrapper(0)
-      , gcHeapStringsNormal(0)
-      , gcHeapStringsShort(0)
-      , gcHeapShapesTreeGlobalParented(0)
-      , gcHeapShapesTreeNonGlobalParented(0)
+      , gcHeapStrings(0)
+      , gcHeapShapesTree(0)
       , gcHeapShapesDict(0)
       , gcHeapShapesBase(0)
       , gcHeapScripts(0)
@@ -167,7 +147,7 @@ struct CompartmentStats
       , objectsExtraRegExpStatics(0)
       , objectsExtraPropertyIteratorData(0)
       , objectsExtraPrivate(0)
-      , stringCharsNonHuge(0)
+      , nonHugeStringChars(0)
       , shapesExtraTreeTables(0)
       , shapesExtraDictTables(0)
       , shapesExtraTreeShapeKids(0)
@@ -176,7 +156,7 @@ struct CompartmentStats
       , jaegerData(0)
       , ionData(0)
       , compartmentObject(0)
-      , crossCompartmentWrappersTable(0)
+      , crossCompartmentWrappers(0)
       , regexpCompartment(0)
       , debuggeesSet(0)
     {}
@@ -186,15 +166,10 @@ struct CompartmentStats
       , extra2(other.extra2)
       , gcHeapArenaAdmin(other.gcHeapArenaAdmin)
       , gcHeapUnusedGcThings(other.gcHeapUnusedGcThings)
-      , gcHeapObjectsOrdinary(other.gcHeapObjectsOrdinary)
+      , gcHeapObjectsNonFunction(other.gcHeapObjectsNonFunction)
       , gcHeapObjectsFunction(other.gcHeapObjectsFunction)
-      , gcHeapObjectsDenseArray(other.gcHeapObjectsDenseArray)
-      , gcHeapObjectsSlowArray(other.gcHeapObjectsSlowArray)
-      , gcHeapObjectsCrossCompartmentWrapper(other.gcHeapObjectsCrossCompartmentWrapper)
-      , gcHeapStringsNormal(other.gcHeapStringsNormal)
-      , gcHeapStringsShort(other.gcHeapStringsShort)
-      , gcHeapShapesTreeGlobalParented(other.gcHeapShapesTreeGlobalParented)
-      , gcHeapShapesTreeNonGlobalParented(other.gcHeapShapesTreeNonGlobalParented)
+      , gcHeapStrings(other.gcHeapStrings)
+      , gcHeapShapesTree(other.gcHeapShapesTree)
       , gcHeapShapesDict(other.gcHeapShapesDict)
       , gcHeapShapesBase(other.gcHeapShapesBase)
       , gcHeapScripts(other.gcHeapScripts)
@@ -209,7 +184,7 @@ struct CompartmentStats
       , objectsExtraRegExpStatics(other.objectsExtraRegExpStatics)
       , objectsExtraPropertyIteratorData(other.objectsExtraPropertyIteratorData)
       , objectsExtraPrivate(other.objectsExtraPrivate)
-      , stringCharsNonHuge(other.stringCharsNonHuge)
+      , nonHugeStringChars(other.nonHugeStringChars)
       , shapesExtraTreeTables(other.shapesExtraTreeTables)
       , shapesExtraDictTables(other.shapesExtraDictTables)
       , shapesExtraTreeShapeKids(other.shapesExtraTreeShapeKids)
@@ -218,7 +193,7 @@ struct CompartmentStats
       , jaegerData(other.jaegerData)
       , ionData(other.ionData)
       , compartmentObject(other.compartmentObject)
-      , crossCompartmentWrappersTable(other.crossCompartmentWrappersTable)
+      , crossCompartmentWrappers(other.crossCompartmentWrappers)
       , regexpCompartment(other.regexpCompartment)
       , debuggeesSet(other.debuggeesSet)
       , typeInferenceSizes(other.typeInferenceSizes)
@@ -235,15 +210,10 @@ struct CompartmentStats
     size_t gcHeapArenaAdmin;
     size_t gcHeapUnusedGcThings;
 
-    size_t gcHeapObjectsOrdinary;
+    size_t gcHeapObjectsNonFunction;
     size_t gcHeapObjectsFunction;
-    size_t gcHeapObjectsDenseArray;
-    size_t gcHeapObjectsSlowArray;
-    size_t gcHeapObjectsCrossCompartmentWrapper;
-    size_t gcHeapStringsNormal;
-    size_t gcHeapStringsShort;
-    size_t gcHeapShapesTreeGlobalParented;
-    size_t gcHeapShapesTreeNonGlobalParented;
+    size_t gcHeapStrings;
+    size_t gcHeapShapesTree;
     size_t gcHeapShapesDict;
     size_t gcHeapShapesBase;
     size_t gcHeapScripts;
@@ -259,7 +229,7 @@ struct CompartmentStats
     size_t objectsExtraRegExpStatics;
     size_t objectsExtraPropertyIteratorData;
     size_t objectsExtraPrivate;
-    size_t stringCharsNonHuge;
+    size_t nonHugeStringChars;
     size_t shapesExtraTreeTables;
     size_t shapesExtraDictTables;
     size_t shapesExtraTreeShapeKids;
@@ -268,7 +238,7 @@ struct CompartmentStats
     size_t jaegerData;
     size_t ionData;
     size_t compartmentObject;
-    size_t crossCompartmentWrappersTable;
+    size_t crossCompartmentWrappers;
     size_t regexpCompartment;
     size_t debuggeesSet;
 
@@ -283,15 +253,10 @@ struct CompartmentStats
         ADD(gcHeapArenaAdmin);
         ADD(gcHeapUnusedGcThings);
 
-        ADD(gcHeapObjectsOrdinary);
+        ADD(gcHeapObjectsNonFunction);
         ADD(gcHeapObjectsFunction);
-        ADD(gcHeapObjectsDenseArray);
-        ADD(gcHeapObjectsSlowArray);
-        ADD(gcHeapObjectsCrossCompartmentWrapper);
-        ADD(gcHeapStringsNormal);
-        ADD(gcHeapStringsShort);
-        ADD(gcHeapShapesTreeGlobalParented);
-        ADD(gcHeapShapesTreeNonGlobalParented);
+        ADD(gcHeapStrings);
+        ADD(gcHeapShapesTree);
         ADD(gcHeapShapesDict);
         ADD(gcHeapShapesBase);
         ADD(gcHeapScripts);
@@ -307,7 +272,7 @@ struct CompartmentStats
         ADD(objectsExtraRegExpStatics);
         ADD(objectsExtraPropertyIteratorData);
         ADD(objectsExtraPrivate);
-        ADD(stringCharsNonHuge);
+        ADD(nonHugeStringChars);
         ADD(shapesExtraTreeTables);
         ADD(shapesExtraDictTables);
         ADD(shapesExtraTreeShapeKids);
@@ -316,7 +281,7 @@ struct CompartmentStats
         ADD(jaegerData);
         ADD(ionData);
         ADD(compartmentObject);
-        ADD(crossCompartmentWrappersTable);
+        ADD(crossCompartmentWrappers);
         ADD(regexpCompartment);
         ADD(debuggeesSet);
 

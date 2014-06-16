@@ -122,10 +122,6 @@ public:
 
  */
     void updateUniforms();
-    
-    /** calls retrieves the named uniform location for this shader program. */
-    GLint getUniformLocationForName(const char* name);
-    
     /** calls glUniform1i only if the values are different than the previous call for this same shader program. */
     void setUniformLocationWith1i(GLint location, GLint i1);
 

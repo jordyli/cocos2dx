@@ -185,14 +185,6 @@ ccLanguageType CCApplication::getCurrentLanguage()
 		case S3E_DEVICE_LANGUAGE_HUNGARIAN:
 			currentLanguage = kLanguageHungarian;
 			break;
-            
-        case S3E_DEVICE_LANGUAGE_PORTUGUESE:
-			currentLanguage = kLanguagePortuguese;
-			break;
-            
-        case S3E_DEVICE_LANGUAGE_ARABIC:
-			currentLanguage = kLanguageArabic;
-			break;
 
 		default:
 			currentLanguage = kLanguageEnglish;

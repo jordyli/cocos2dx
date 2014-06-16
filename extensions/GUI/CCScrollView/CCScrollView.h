@@ -26,7 +26,7 @@
 #ifndef __CCSCROLLVIEW_H__
 #define __CCSCROLLVIEW_H__
 
-#include "cocos2d.h"
+#include "layers_scenes_transitions_nodes/CCLayer.h"
 #include "ExtensionMacros.h"
 
 NS_CC_EXT_BEGIN
@@ -203,6 +203,13 @@ public:
     void setTouchEnabled(bool e);
 private:
     /**
+     * Init this object with a given size to clip its content.
+     *
+     * @param size view size
+     * @return initialized scroll view object
+     */
+    bool initWithViewSize(CCSize size);
+    /**
      * Relocates the container at the proper offset, in bounds of max/min offsets.
      *
      * @param animated If YES, relocation is animated
@@ -238,8 +245,6 @@ private:
     void handleZoom();
 
 protected:
-    CCRect getViewRect();
-    
     /**
      * current zoom scale
      */

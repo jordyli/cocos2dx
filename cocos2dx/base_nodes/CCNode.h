@@ -36,7 +36,6 @@
 #include "shaders/CCGLProgram.h"
 #include "kazmath/kazmath.h"
 #include "script_support/CCScriptSupport.h"
-#include "CCProtocols.h"
 
 NS_CC_BEGIN
 
@@ -125,6 +124,7 @@ enum {
 class CC_DLL CCNode : public CCObject
 {
 public:
+    //////////////////////////////
     /// @{
     /// @name Constructor, Distructor and Initializers
     
@@ -138,11 +138,6 @@ public:
      */
     virtual ~CCNode(void);
     
-    /**
-     *  Initializes the instance of CCNode
-     *  @return Whether the initialization was successful.
-     */
-    virtual bool init();
 	/**
      * Allocates and initializes a node.
      * @return A initialized node which is marked as "autorelease".
@@ -159,6 +154,7 @@ public:
     
     
     
+    ///////////////////////////////////////////////////////
     /// @{
     /// @name Setters & Getters for Graphic Peroperties
     
@@ -547,6 +543,7 @@ public:
     /// @}  end of Setters & Getters for Graphic Peroperties
     
     
+    ///////////////////////////////////////////////////////
     /// @{
     /// @name Children and Parent
     
@@ -702,6 +699,7 @@ public:
     
 
     
+    ////////////////////////////////////
     /// @{
     /// @name Grid object for effects
     
@@ -721,6 +719,7 @@ public:
     /// @} end of Grid
     
     
+    /////////////////////////////////////
     /// @{
     /// @name Tag & User data
     
@@ -809,6 +808,7 @@ public:
     /// @} end of Tag & User Data
     
     
+    ///////////////////////////////
     /// @{
     /// @name Shader Program
     /**
@@ -831,6 +831,8 @@ public:
     virtual void setShaderProgram(CCGLProgram *pShaderProgram);
     /// @} end of Shader Program
     
+    ///////////////////////////////////////
+    ///////////////////////////////////////
     
     /**
      * Returns a camera object that lets you move the node using a gluLookAt
@@ -855,6 +857,7 @@ public:
     virtual bool isRunning();
 
     
+    /////////////////////////////////
     /// @{
     /// @name Script Bindings for lua
 
@@ -903,6 +906,7 @@ public:
     /// @}  end Script Bindings
 
 
+    //////////////////////////
     /// @{
     /// @name Event Callbacks
     
@@ -971,6 +975,7 @@ public:
      */
     CCRect boundingBox(void);
 
+    /////////////////////////////////////////
     /// @{
     /// @name Actions
 
@@ -1042,6 +1047,7 @@ public:
     /// @} end of Actions
     
     
+    //////////////////
     /// @{
     /// @name Scheduler and Timer
 
@@ -1164,9 +1170,9 @@ public:
      * Update method will be called automatically every frame if "scheduleUpdate" is called, and the node is "live"
      */
     virtual void update(float delta);
+    
 
-    /// @} end of Scheduler and Timer
-
+    ////////////////////////////
     /// @{
     /// @name Transformations
     
@@ -1214,6 +1220,7 @@ public:
     /// @} end of Transformations
     
     
+    ///////////////////
     /// @{
     /// @name Coordinate Converters
     
@@ -1249,55 +1256,6 @@ public:
      */
     CCPoint convertTouchToNodeSpaceAR(CCTouch * touch);
     
-	/**
-     *  Sets the additional transform.
-     *
-     *  @note The additional transform will be concatenated at the end of nodeToParentTransform.
-     *        It could be used to simulate `parent-child` relationship between two nodes (e.g. one is in BatchNode, another isn't).
-     *  @code
-        // create a batchNode
-        CCSpriteBatchNode* batch= CCSpriteBatchNode::create("Icon-114.png");
-        this->addChild(batch);
-     
-        // create two sprites, spriteA will be added to batchNode, they are using different textures.
-        CCSprite* spriteA = CCSprite::createWithTexture(batch->getTexture());
-        CCSprite* spriteB = CCSprite::create("Icon-72.png");
-
-        batch->addChild(spriteA); 
-     
-        // We can't make spriteB as spriteA's child since they use different textures. So just add it to layer.
-        // But we want to simulate `parent-child` relationship for these two node.
-        this->addChild(spriteB); 
-
-        //position
-        spriteA->setPosition(ccp(200, 200));
-     
-        // Gets the spriteA's transform.
-        CCAffineTransform t = spriteA->nodeToParentTransform();
-     
-        // Sets the additional transform to spriteB, spriteB's postion will based on its pseudo parent i.e. spriteA.
-        spriteB->setAdditionalTransform(t);
-
-        //scale
-        spriteA->setScale(2);
-     
-        // Gets the spriteA's transform.
-        t = spriteA->nodeToParentTransform();
-     
-        // Sets the additional transform to spriteB, spriteB's scale will based on its pseudo parent i.e. spriteA.
-        spriteB->setAdditionalTransform(t);
-
-        //rotation
-        spriteA->setRotation(20);
-     
-        // Gets the spriteA's transform.
-        t = spriteA->nodeToParentTransform();
-     
-        // Sets the additional transform to spriteB, spriteB's rotation will based on its pseudo parent i.e. spriteA.
-        spriteB->setAdditionalTransform(t);
-     *  @endcode
-     */
-    void setAdditionalTransform(const CCAffineTransform& additionalTransform);
     /// @} end of Coordinate Converters
 
 private:
@@ -1332,8 +1290,6 @@ protected:
     
     CCSize m_obContentSize;             ///< untransformed size of the node
     
-    
-    CCAffineTransform m_sAdditionalTransform; ///< transform
     CCAffineTransform m_sTransform;     ///< transform
     CCAffineTransform m_sInverse;       ///< transform
     
@@ -1365,7 +1321,7 @@ protected:
     
     bool m_bTransformDirty;             ///< transform dirty flag
     bool m_bInverseDirty;               ///< transform dirty flag
-    bool m_bAdditionalTransformDirty;   ///< The flag to check whether the additional transform is dirty
+    
     bool m_bVisible;                    ///< is this node visible
     
     bool m_bIgnoreAnchorPointForPosition; ///< true if the Anchor Point will be (0,0) when you position the CCNode, false otherwise.
@@ -1376,51 +1332,6 @@ protected:
     int m_nScriptHandler;               ///< script handler for onEnter() & onExit(), used in Javascript binding and Lua binding.
     int m_nUpdateScriptHandler;         ///< script handler for update() callback per frame, which is invoked from lua & javascript.
     ccScriptType m_eScriptType;         ///< type of script binding, lua or javascript
-};
-
-//#pragma mark - CCNodeRGBA
-
-/** CCNodeRGBA is a subclass of CCNode that implements the CCRGBAProtocol protocol.
- 
- All features from CCNode are valid, plus the following new features:
- - opacity
- - RGB colors
- 
- Opacity/Color propagates into children that conform to the CCRGBAProtocol if cascadeOpacity/cascadeColor is enabled.
- @since v2.1
- */
-class CC_DLL CCNodeRGBA : public CCNode, public CCRGBAProtocol
-{
-public:
-    CCNodeRGBA();
-    virtual ~CCNodeRGBA();
-    
-    virtual bool init();
-    
-    virtual GLubyte getOpacity();
-    virtual GLubyte getDisplayedOpacity();
-    virtual void setOpacity(GLubyte opacity);
-    virtual void updateDisplayedOpacity(GLubyte parentOpacity);
-    virtual bool isCascadeOpacityEnabled();
-    virtual void setCascadeOpacityEnabled(bool cascadeOpacityEnabled);
-    
-    virtual const ccColor3B& getColor(void);
-    virtual const ccColor3B& getDisplayedColor();
-    virtual void setColor(const ccColor3B& color);
-    virtual void updateDisplayedColor(const ccColor3B& parentColor);
-    virtual bool isCascadeColorEnabled();
-    virtual void setCascadeColorEnabled(bool cascadeColorEnabled);
-    
-    virtual void setOpacityModifyRGB(bool bValue) {};
-    virtual bool isOpacityModifyRGB() { return false; };
-
-protected:
-	GLubyte		_displayedOpacity;
-    GLubyte     _realOpacity;
-	ccColor3B	_displayedColor;
-    ccColor3B   _realColor;
-	bool		_cascadeColorEnabled;
-    bool        _cascadeOpacityEnabled;
 };
 
 // end of base_node group

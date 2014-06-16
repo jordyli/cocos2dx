@@ -45,18 +45,3 @@ Object.defineProperties(sys,
 	}
 
 });
-
-// Forces the garbage collector
-sys.garbageCollect = function() {
-	__jsc__.garbageCollect();
-};
-
-// Dumps rooted objects
-sys.dumpRoot = function() {
-	__jsc__.dumpRoot();
-};
-
-// restarts the JS VM
-sys.restartVM = function() {
-	__restartVM();
-};

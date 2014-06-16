@@ -244,8 +244,7 @@ static int tolua_bnd_cast (lua_State* L)
 */
 static int tolua_bnd_isnulluserdata (lua_State* L) {
     void **ud = (void**)lua_touserdata(L, -1);
-    tolua_pushboolean(L, ud == NULL || *ud == NULL);
-    return 1;
+    return ud == NULL || *ud == NULL;
 }
 
 /* Inheritance
@@ -729,7 +728,7 @@ TOLUA_API void tolua_array (lua_State* L, const char* name, lua_CFunction get, l
 TOLUA_API void tolua_dobuffer(lua_State* L, char* B, unsigned int size, const char* name) {
 
 #ifdef LUA_VERSION_NUM /* lua 5.1 */
-    if (!luaL_loadbuffer(L, B, size, name)) lua_pcall(L, 0, 0, 0);
+    luaL_loadbuffer(L, B, size, name) || lua_pcall(L, 0, 0, 0);
 #else
     lua_dobuffer(L, B, size, name);
 #endif

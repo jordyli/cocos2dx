@@ -19,9 +19,13 @@ cc.BuilderReader.load = function(file, owner, parentSize)
     
     var node;
 
-    if (parentSize)
+    if (owner && parentSize)
     {
-        node = reader.load(file, null, parentSize);
+        node = reader.load(file, owner, parentSize);
+    }
+    else if (owner)
+    {
+        node = reader.load(file,owner);
     }
     else
     {
@@ -105,33 +109,6 @@ cc.BuilderReader.load = function(file, owner, parentSize)
         if (typeof(controller.onDidLoadFromCCB) == "function")
         {
             controller.onDidLoadFromCCB();
-        }
-
-        // Setup timeline callbacks
-        var keyframeCallbacks = animationManager.getKeyframeCallbacks();
-        for (var j = 0; j < keyframeCallbacks.length; j++)
-        {
-            var callbackSplit = keyframeCallbacks[j].split(":");
-            var callbackType = callbackSplit[0];
-            var callbackName = callbackSplit[1];
-            
-            if (callbackType == 1) // Document callback
-            {
-                var callfunc = cc.CallFunc.create(controller[callbackName], controller);
-                animationManager.setCallFuncForJSCallbackNamed(callfunc, keyframeCallbacks[j]);
-            }
-            else if (callbackType == 2 && owner) // Owner callback
-            {
-                var callfunc = cc.CallFunc.create(owner[callbackName], owner);
-                animationManager.setCallFuncForJSCallbackNamed(callfunc, keyframeCallbacks[j]);
-            }
-        }
-        
-        // Start animation
-        var autoPlaySeqId = animationManager.getAutoPlaySequenceId();
-        if (autoPlaySeqId != -1)
-        {
-            animationManager.runAnimationsForSequenceIdTweenDuration(autoPlaySeqId, 0);
         }
     }
 

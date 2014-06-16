@@ -82,6 +82,9 @@ public:
     
     /** initializes the CCLabelTTF */
     bool init();
+    /** Creates an label.
+     */
+    static CCLabelTTF * node();
 
     /** Creates an label.
      */

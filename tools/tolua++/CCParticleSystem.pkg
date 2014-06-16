@@ -87,13 +87,13 @@ class CCParticleSystem : public CCNode
     float getEndSizeVar();
 	void  setEndSizeVar(float size);
 
-	void  setStartColor(const ccColor4F var);
+	void  setStartColor(ccColor4F var);
     const ccColor4F & getStartColor();
-	void  setStartColorVar(const ccColor4F var);
+	void  setStartColorVar(ccColor4F var);
     const ccColor4F & getStartColorVar();
-	void  setEndColor(const ccColor4F var);
+	void  setEndColor(ccColor4F var);
     const ccColor4F & getEndColor();
-	void  setEndColorVar(const ccColor4F var);
+	void  setEndColorVar(ccColor4F var);
     const ccColor4F & getEndColorVar();
 	void  setStartSpin(float var);
     float getStartSpin();

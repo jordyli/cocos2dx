@@ -7,28 +7,25 @@ NS_CC_EXT_BEGIN
 
 CCPoint getAbsolutePosition(const CCPoint &pt, int nType, const CCSize &containerSize, const char *pPropName)
 {
-    float resolutionScale = CCBReader::getResolutionScale();
-    
     CCPoint absPt = ccp(0,0);
     if (nType == kCCBPositionTypeRelativeBottomLeft)
     {
-        absPt.x = pt.x * resolutionScale;
-        absPt.y = pt.y * resolutionScale;
+        absPt = pt;
     }
     else if (nType == kCCBPositionTypeRelativeTopLeft)
     {
-        absPt.x = pt.x * resolutionScale;
-        absPt.y = (containerSize.height - pt.y) * resolutionScale;
+        absPt.x = pt.x;
+        absPt.y = containerSize.height - pt.y;
     }
     else if (nType == kCCBPositionTypeRelativeTopRight)
     {
-        absPt.x = (containerSize.width - pt.x) * resolutionScale;
-        absPt.y = (containerSize.height - pt.y) * resolutionScale;
+        absPt.x = containerSize.width - pt.x;
+        absPt.y = containerSize.height - pt.y;
     }
     else if (nType == kCCBPositionTypeRelativeBottomRight)
     {
-        absPt.x = (containerSize.width - pt.x) * resolutionScale;
-        absPt.y = pt.y * resolutionScale;
+        absPt.x = containerSize.width - pt.x;
+        absPt.y = pt.y;
     }
     else if (nType == kCCBPositionTypePercent)
     {
@@ -37,11 +34,10 @@ CCPoint getAbsolutePosition(const CCPoint &pt, int nType, const CCSize &containe
     }
     else if (nType == kCCBPositionTypeMultiplyResolution)
     {
-        CCSize fs = CCDirector::sharedDirector()->getOpenGLView()->getFrameSize();
-        CCSize dr = CCBReader::getDesignResolution();
+        float resolutionScale = CCBReader::getResolutionScale();
         
-        absPt.x = fs.width / 2 - ((dr.width / 2 - pt.x) * resolutionScale);
-        absPt.y = fs.height / 2 - ((dr.height / 2 -pt.y) * resolutionScale);
+        absPt.x = pt.x * resolutionScale;
+        absPt.y = pt.y * resolutionScale;
     }
     
     return absPt;

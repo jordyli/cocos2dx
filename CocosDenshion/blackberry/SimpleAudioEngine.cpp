@@ -58,15 +58,11 @@ namespace CocosDenshion
 
 	static float s_volume 				   = 1.0f;
 	static float s_effectVolume			   = 1.0f;
+	static bool  s_isBackgroundInitialized = false;
+	static std::string s_currentBackgroundStr;
 
-	struct backgroundMusicData {
-		ALuint buffer;
-		ALuint source;
-	};
-	typedef map<string, backgroundMusicData *> BackgroundMusicsMap;
-	BackgroundMusicsMap s_backgroundMusics;
-
-	static ALuint s_backgroundSource = AL_NONE;
+	ALuint s_backgroundBuffer;
+	ALuint s_backgroundSource;
 
 	static SimpleAudioEngine  *s_engine = 0;
 
@@ -105,26 +101,18 @@ namespace CocosDenshion
 
     static void stopBackground(bool bReleaseData)
     {
-		alSourceStop(s_backgroundSource);
+    	alSourceStop(s_backgroundSource);
 
 		if (bReleaseData)
 		{
-			for (BackgroundMusicsMap::iterator it = s_backgroundMusics.begin(); it != s_backgroundMusics.end(); ++it)
-			{
-				if (it->second->source == s_backgroundSource)
-				{
-					alDeleteBuffers(1, &it->second->buffer);
-					checkALError("stopBackground");
-					alDeleteSources(1, &it->second->source);
-					checkALError("stopBackground");
-					delete it->second;
-					s_backgroundMusics.erase(it);
-					break;
-				}
-			}
-		}
+			s_currentBackgroundStr = "";
+			s_isBackgroundInitialized = false;
 
-		s_backgroundSource = AL_NONE;
+			alDeleteBuffers(1, &s_backgroundBuffer);
+			checkALError("stopBackground");
+			alDeleteSources(1, &s_backgroundSource);
+			checkALError("stopBackground");
+		}
     }
 
     static void setBackgroundVolume(float volume)
@@ -170,18 +158,6 @@ namespace CocosDenshion
 
 		// and the background too
 		stopBackground(true);
-
-		for (BackgroundMusicsMap::iterator it = s_backgroundMusics.begin(); it != s_backgroundMusics.end(); ++it)
-		{
-			alSourceStop(it->second->source);
-			checkALError("end");
-			alDeleteBuffers(1, &it->second->buffer);
-			checkALError("end");
-			alDeleteSources(1, &it->second->source);
-			checkALError("end");
-			delete it->second;
-		}
-		s_backgroundMusics.clear();
 	}
 
 	//
@@ -208,6 +184,7 @@ namespace CocosDenshion
 		ALenum 			format;
 		int 			result;
 		int 			section;
+		int				err;
 		unsigned int 	size = 0;
 
 		if (ov_fopen(pszFilePath, &ogg_file) < 0)
@@ -285,64 +262,52 @@ namespace CocosDenshion
 		// Changing file path to full path
     	std::string fullPath = CCFileUtils::sharedFileUtils()->fullPathForFilename(pszFilePath);
 
-    	BackgroundMusicsMap::const_iterator it = s_backgroundMusics.find(fullPath);
-		if (it == s_backgroundMusics.end())
+		if (!s_isBackgroundInitialized || s_currentBackgroundStr != fullPath)
 		{
-			ALuint buffer = AL_NONE;
-			if (isOGGFile(fullPath.data()))
+			string path = fullPath;
+
+			if (isOGGFile(path.data()))
 			{
-				buffer = createBufferFromOGG(fullPath.data());
+				s_backgroundBuffer = createBufferFromOGG(path.data());
 			}
 			else
 			{
-				buffer = alutCreateBufferFromFile(fullPath.data());
+				s_backgroundBuffer = alutCreateBufferFromFile(path.data());
 			}
 
 			checkALError("preloadBackgroundMusic");
 
-			if (buffer == AL_NONE)
+			if (s_backgroundBuffer == AL_NONE)
 			{
-				fprintf(stderr, "Error loading file: '%s'\n", fullPath.data());
-				alDeleteBuffers(1, &buffer);
+				fprintf(stderr, "Error loading file: '%s'\n", path.data());
+				alDeleteBuffers(1, &s_backgroundBuffer);
 				return;
 			}
 
-			ALuint source = AL_NONE;
-			alGenSources(1, &source);
+			alGenSources(1, &s_backgroundSource);
 			checkALError("preloadBackgroundMusic");
 
-			alSourcei(source, AL_BUFFER, buffer);
+			alSourcei(s_backgroundSource, AL_BUFFER, s_backgroundBuffer);
 			checkALError("preloadBackgroundMusic");
 
-			backgroundMusicData* data = new backgroundMusicData();
-			data->buffer = buffer;
-			data->source = source;
-			s_backgroundMusics.insert(BackgroundMusicsMap::value_type(fullPath, data));
+			s_currentBackgroundStr = fullPath;
 		}
+
+		s_currentBackgroundStr 	  = fullPath;
+		s_isBackgroundInitialized = true;
 	}
 
 	void SimpleAudioEngine::playBackgroundMusic(const char* pszFilePath, bool bLoop)
 	{
-		if (s_backgroundSource != AL_NONE)
-			stopBackgroundMusic(false);
-
 		// Changing file path to full path
     	std::string fullPath = CCFileUtils::sharedFileUtils()->fullPathForFilename(pszFilePath);
 
-    	BackgroundMusicsMap::const_iterator it = s_backgroundMusics.find(fullPath);
-		if (it == s_backgroundMusics.end())
-		{
+		if (!s_isBackgroundInitialized)
 			preloadBackgroundMusic(fullPath.c_str());
-			it = s_backgroundMusics.find(fullPath);
-		}
 
-		if (it != s_backgroundMusics.end())
-		{
-			s_backgroundSource = it->second->source;
-			alSourcei(s_backgroundSource, AL_LOOPING, bLoop ? AL_TRUE : AL_FALSE);
-			alSourcePlay(s_backgroundSource);
-			checkALError("playBackgroundMusic");
-		}
+		alSourcei(s_backgroundSource, AL_LOOPING, bLoop ? AL_TRUE : AL_FALSE);
+		alSourcePlay(s_backgroundSource);
+		checkALError("playBackgroundMusic");
 	}
 
 	void SimpleAudioEngine::stopBackgroundMusic(bool bReleaseData)

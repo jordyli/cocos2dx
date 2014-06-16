@@ -126,7 +126,7 @@ void SimpleAudioEngine::setBackgroundMusicVolume(float volume) {
 }
 
 float SimpleAudioEngine::getEffectsVolume() {
-	return oAudioPlayer->getEffectsVolume();
+	return oAudioPlayer->getBackgroundMusicVolume();
 }
 
 void SimpleAudioEngine::setEffectsVolume(float volume) {

@@ -129,4 +129,20 @@ TargetPlatform CCApplication::getTargetPlatform()
     return kTargetAndroid;
 }
 
+void CCApplication::openURL(const char* url)
+{
+    JniMethodInfo methodInfo;
+    
+    if(JniHelper::getStaticMethodInfo(methodInfo,
+                                      "org/cocos2dx/lib/Cocos2dxActivity",
+                                      "openURL",
+                                      "(Ljava/lang/String;)V"))
+    {
+        jstring stringArg = methodInfo.env->NewStringUTF(url);
+        methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, stringArg);
+        methodInfo.env->DeleteLocalRef(stringArg);
+        methodInfo.env->DeleteLocalRef(methodInfo.classID);
+    }
+}
+
 NS_CC_END

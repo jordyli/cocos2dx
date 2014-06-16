@@ -60,6 +60,11 @@ public:
      @brief Get target platform
      */
     virtual TargetPlatform getTargetPlatform();
+    
+    /**
+     @brief Jordy : Open a url
+     */
+    virtual void openURL(const char* url);
 
 protected:
     static CCApplication * sm_pSharedApplication;
